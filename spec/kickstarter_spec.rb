@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe 'Backer - ::new' do
   it 'takes a name on initialization, accessible through an attribute reader' do
     backer = Backer.new('Avi')
@@ -47,18 +49,21 @@ end
 
 describe 'Backer - #back_project' do
   it 'is an instance method that accepts a project as an argument and creates a ProjectBacker, associating the project with this backer' do
+    ProjectBacker.class_variable_set(:@@all, [])
     spencer = Backer.new('Spencer')
     magic = Project.new('Magic The Gathering Thing')
 
     # If we are calling this method in this way, what type of argument is it taking?
     # We are actually passing in a Project object! Cool, huh?
     spencer.back_project(magic)
-    expect(spencer.backed_projects).to include(magic)
+    expect(ProjectBacker.all.first.project).to eq(magic)
+    expect(ProjectBacker.all.first.backer).to eq(spencer)
   end
 end
 
 describe 'Project - #add_backer' do
   it 'is an instance method that accepts a backer as an argument and creates a ProjectBacker, associating the backer with this project' do
+    ProjectBacker.class_variable_set(:@@all, [])
     book = Project.new('Ruby, Ruby, and More Ruby')
     steven = Backer.new('Steven')
 
@@ -67,6 +72,51 @@ describe 'Project - #add_backer' do
     # cool ways.
     book.add_backer(steven)
 
-    expect(book.backers).to include(steven)
+    expect(ProjectBacker.all.first.project).to eq(book)
+    expect(ProjectBacker.all.first.backer).to eq(steven)
+  end
+end
+
+describe 'Backer - backed_projects' do
+  it 'returns an array of projects that associated with this Backer instance' do
+    ProjectBacker.class_variable_set(:@@all, [])
+    book = Project.new('Ruby, Ruby, and More Ruby')
+    magic = Project.new('Magic The Gathering Thing')
+    karaoke = Project.new('Karaoke')
+    steven = Backer.new('Steven')
+    spencer = Backer.new('Spencer')
+    meryl = Backer.new('Meryl')
+
+    meryl.back_project(karaoke)
+    steven.back_project(karaoke)
+    steven.back_project(magic)
+    spencer.back_project(book)
+    meryl.back_project(book)
+
+    expect(meryl.backed_projects).to eq([karaoke, book])
+    expect(steven.backed_projects).to eq([karaoke, magic])
+    expect(spencer.backed_projects).to eq([book])
+  end
+end
+
+describe 'Project - backers' do
+  it 'returns an array of projects that associated with this Project instance' do
+    ProjectBacker.class_variable_set(:@@all, [])
+    book = Project.new('Ruby, Ruby, and More Ruby')
+    magic = Project.new('Magic The Gathering Thing')
+    karaoke = Project.new('Karaoke')
+    steven = Backer.new('Steven')
+    spencer = Backer.new('Spencer')
+    meryl = Backer.new('Meryl')
+
+    book.add_backer(steven)
+    book.add_backer(meryl)
+    karaoke.add_backer(meryl)
+    magic.add_backer(steven)
+    karaoke.add_backer(steven)
+
+    expect(book.backers).to eq([steven, meryl])
+    expect(karaoke.backers).to eq([meryl, steven])
+    expect(magic.backers).to eq([steven])
   end
 end
