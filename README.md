@@ -1,4 +1,4 @@
-# Object Oriented Kickstarter
+# Object-Oriented Kickstarter
 
 ## Objectives
 
@@ -8,7 +8,7 @@
 
 In this lab, we are going to be creating a very, very simple version of
 Kickstarter. We'll have Projects and Backers (and no concept of money at all),
-and they will need to interact with one another in a realistic way.
+and they will need to interact with one another realistically.
 
 We want our interface to work something like this:
 
@@ -26,48 +26,65 @@ awesome_project.backers
 ```
 
 The tricky thing here is that projects can have many backers and backers can
-back many projects.
+back many projects. Neither can _belong to_ just one of the other.
+
+However, if we introduce a third class in-between Project and Backer, we can
+establish a _has-many-through_ relationship _in both directions!
+
+We can call this class ProjectBacker - each instance of ProjectBacker will
+represent an association between a single backer and a single project. A
+ProjectBacker, therefore, belongs to one Backer and one Project. ProjectBacker,
+in essence, acts as a _join_ between Project and Backer. It allows us to
+maintain the 'has-many' / 'has-many' relationship that the two have.
 
 ## Instructions
 
-The specs have been set to run in default order, and are written in such a way
-that tests for the Backer and Project classes are mixed in with one another.
-This is not how you'd normally see specs for multiple objects. For the purposes
-of this lab, though, following the specs in order will eventually lead you to
-the correct relationships between your classes.
+The specs have been set to run in the default order, and are written in such a way
+that tests for the Backer, Project, and ProjectBacker classes are mixed in with
+one another. This is not how you'd normally see specs for multiple objects. For
+the purposes of this lab, though, following the specs in order will eventually
+lead you to the correct relationships between your classes.
 
-- When a `Backer` instance is initialized, it should be initialized with a
-  `@backed_projects` variable set to an empty array. Instances of the `Backer`
-  class should have an `attr_reader` for backed projects. This way, a backer can
-  report on the projects they back.
+- When a `Backer` instance is initialized, it should be initialized with a name.
 
-- When a `Project` instance is initialized, it should be initialized with a
-  `@backers` variable set to an empty array. Instances of the `Project` class
-  should have an `attr_reader` for backers. This way, a project can report on
-  who its backers are.
+- When a `Project` instance is initialized, it should be initialized with a title.
 
-- Once both classes have their attributes and readers set up, write a method on
-  the Backer class called `back_project()` that takes in a Project instance and
-  adds the project to its `@backed_projects` attribute.
+- When a `ProjectBacker` instance is initialized, it should be initialized with a `Project` instance and a
+`Backer` instance.
 
-- Similarly, write a method on the Project class called `add_backer()` that
-  takes in a Backer instance and adds the backer to its `@backers` attribute.
+- The `ProjectBacker` class is maintaining the relationship. It should have an `@@all` class
+variable. When an instance is initialized, it should be
+stored in this variable.
 
-Great! We've got backers keeping track of the projects they back and projects
-keeping track of their backers.
+- The `ProjectBacker` class should also have a class
+method `.all` that returns the `@@all` class variable.
 
-But... do you see the problem? Both sides of this relationship, backer and
-project, are keeping track of each other, and to maintain consistent data,
-if one side is updated, the other side should be as well.
+- Once both classes have their attributes and readers set up, write an instance
+  method on the Backer class called `back_project` that takes in a Project
+  instance. This method should create a `ProjectBacker` instance using the
+  provided Project instance and the current Backer instance (the instance this method was called on).
 
-- Whenever `back_project()` is called to update `@backed_projects`, the project
-  _should alsoupdate its `@backers` list_.
+- Similarly, write a method on the Project class called `add_backer` that takes
+  in a Backer instance and creates a `ProjectBacker` using the Backer instance
+  and the current Project instance.
 
-- Similarly, whenever `add_backer()` is called to update `@backers`, the backer
-  _should also update its `@backed_projects` list_.
+- With `back_project` set up, the final step for the Backer class is to build an
+  instance method that returns all the projects associated with _this Backer
+  instance. Since Project instances are not directly associated with Backer instances, you will need to get
+  this information _through_ the ProjectBacker class.
 
-You may realize that this set up does not maintain a single source of truth. The
-trouble here is that our usual way of maintaining a "has-many" / "belongs-to"
-relationship won't work here. We'll address this is upcoming lessons, 
+- For the Project class, write a similar method, `backers`, that returns all
+  _backers_ associated with this Project instance.
+
+## Conclusion
+
+By creating the ProjectBacker class, we can maintain a single source of truth in
+a relationship where both sides have many of the other.
+
+ProjectBacker is also a great example of how awesome object-orientation is - we
+can use OO to represent real-world relationships and
+classes to represent _things_. But sometimes, when we need
+more flexibility, classes can exist purely to represent a
+_relationship_.
 
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/oo-kickstarter' title='Object Oriented Kickstarter'>Object Oriented Kickstarter</a> on Learn.co and start learning to code for free.</p>
