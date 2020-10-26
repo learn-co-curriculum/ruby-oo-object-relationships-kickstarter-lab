@@ -87,4 +87,4 @@ classes to represent _things_. But sometimes, when we need
 more flexibility, classes can exist purely to represent a
 _relationship_.
 
-<p data-visibility='hidden'>View <a href='https://learn.co/lessons/oo-kickstarter' title='Object Oriented Kickstarter'>Object Oriented Kickstarter</a> on Learn.co and start learning to code for free.</p>
+
